@@ -1,0 +1,424 @@
+
+
+	projeto Node
+	--> package.json
+	--> node_modules
+
+--------------------------------------------------
+
+Documentação: angular.io
+
+Gerenciador de aplicações: permitir criar projetos Angular, além de disponibilizar
+                           comandos
+
+			Instalação:
+			
+			npm install -g @angular/cli		(instala a última versao)
+			npm install -g @angular/cli@12		(instala a versão especificada)
+			npm install -g @angular/cli@latest	
+
+--------------------------------------------------------------------------------
+Comandos do Angular CLI:
+
+	Criando um novo projeto:	ng new <nome_projeto>
+					ng new app-angular
+
+	Executando o projeto		ng serve
+
+	Criando componentes		ng generate component <nome_componente>
+					ng generate component components/exemplo01
+					ng g c components/exemplo01
+
+					ng g c components/exemplo02 --skip-tests
+
+	Criando classes			ng generate class <nome_classe>
+					ng generate class classes/pessoa
+					ng g cl classes/pessoa
+
+	Criando services		ng generate service <nome_service>
+					ng generate service services/pessoa
+					ng g s services/pessoa
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------
+Ciclo de vida de uma aplicação Angular
+
+
+
+ng serve   -->  (1) angular.json  --> 
+		(2) main.ts  --> 
+		(3) AppModule  --> 
+		(4) AppComponent --> 	selector: 'app-root'
+					templateUrl: './app.component.html'
+
+ 						|
+						|
+					       \ /
+ 					   index.html
+
+
+Obs.: Se alguma alteração for realizada no arquivo angular.json, a execução deve ser reiniciada.
+
+
+
+
+
+
+
+
+
+
+
+Componentes:
+	clientes.component.ts
+	produtos.component.ts
+	vendas.component.ts
+
+Modulos:
+	admin.module.ts
+	fatura.module.ts
+
+Services:
+
+	pagamento.service.ts
+	cartoes.service.ts
+	....
+
+
+# main.ts
+import { AppModule } from './app/app.module';
+
+
+
+# app.module.ts
+export class AppModule { }
+-------------------------------------
+
+@NgModule({
+   caracteristicas
+})
+export class AppModule { }
+
+
+@Component({
+   caracteristicas
+})
+export class AppComponent { }
+
+-------------------------------------------------------------------
+Ordem de criação dos novos componentes para o projeto app-angular
+
+1. Criar o componente menu. Nele, usaremos os recursos do bootstrap para criar uma barra de
+   navegação.
+
+2. Criar o componente startup. Chamar o componente menu na view do componente startup.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+versão estável: 15.2.3
+
+versão beta: 15.3.0
+------------------------------------
+	npm install	(lê package.json)
+
+                                |
+                                \/
+                           moment: ^2.1
+
+--------------------------------------------------------------------------
+Novo Projeto: app-vendas
+
+
+	ng new app-vendas --routing --style=css --skip-tests
+
+	- incluir o componente menu, configurar este componente de acordo com o navbar do
+          bootstrap
+	- adicionar os componentes:
+		home: página inicial
+		apresentacao: apresentação do sistema
+		not-found: componente geral para acesso incorreto (404)
+
+	ng g c components/home
+	ng g c components/apresentacao
+	ng g c components/not-found
+
+
+
+Definição da estrutura de gestão de clientes:
+
+Pasta:
+	components/clientes
+
+Componentes:
+	clientes.component.ts
+	cliente-novo.component.ts
+	clientes-lista.component.ts
+
+	ng g c components/clientes/clientes
+	ng g c components/clientes/cliente-novo
+	ng g c components/clientes/clientes-lista
+
+Após as implementações realizadas durante a aula nos componentes: clientes, cliente-novo e clientes-lista,
+vamos implementar o primeiro acesso à API.
+
+Para a implementação do consumo à API:
+
+- criar uma classe Cliente (cpf, nome, email, telefone)
+
+	ng g class classes/cliente
+
+- no módulo AppModule, adicionar o módulo HttpClientModule
+- criar o service ClientesService contendo os endpoints para a API 
+
+	
+
+- No service criado anteriormente, implementar os recursos para o consumo
+- Implementar a listagem de clientes (componente clientes-lista)
+
+- Implementar a inclusão do cliente. Para esta implementação, será necessário vincular o formulário
+  (html) à classe (ts) usando o conceito de Bidirectional Binding:
+
+	- Adicionar o módulo FormsModule ao módulo AppModule
+
+- Adicionar duas novas rotas, acessando dois novos componentes:
+
+
+	ng g c components/clientes/cliente-alteracao
+	ng g c components/clientes/cliente-remocao
+
+------------------------------------------------------------------------
+Criando um novo módulo para a gestão de produtos:
+
+	ng g m modules/produtos --routing
+
+
+Especificação de rotas:
+
+RouterModule.forRoot(routes)
+
+	routes = [ path: "produtos", ... ]
+
+						------>   /produtos/novo
+
+RouterModule.forChild(routes)
+
+	routes [ path: "novo", .... ]
+
+
+------------------
+Criando components e adicionando-os ao novo módulo criado (ProdutosModule)
+
+	ng g c components/produtos/produtos --module=modules/produtos/produtos.module.ts
+	ng g c components/produtos/produtos-novo --module=modules/produtos/produtos.module.ts
+	ng g c components/produtos/produtos-lista --module=modules/produtos/produtos.module.ts
+
+
+Criar a classe produto (pasta classes)
+
+	ng g cl classes/produto
+
+
+Criar o service produtos (pasta services)
+
+	ng g s services/produtos
+
+
+Adicionar uma classe para as unidades do produto.
+
+	ng g cl classes/unidade
+---------------------------------------------------------------
+
+Criando pipes personalizados.
+
+	ng g pipe pipes/sub-lista
+	ng g p pipes/sub-lista
+
+
+Ao criar um pipe personalizado, devemos conhecer três características:
+
+	- Qual o objetivo do pipe?
+	- Qual o elemento sobre o qual ele atuará?
+	- O que produzirá como resposta?
+
+   Exemplo
+
+	{{ nome | uppercase }}
+
+	- Qual o objetivo do pipe? Transformar o elemento alvo em maiúsculo
+	- Qual o elemento sobre o qual ele atuará? A propriedade 'nome' (elemento alvo)
+	- O que produzirá como resposta? O valor do elemento alvo ('nome') em maiúsculo.
+
+
+@Pipe({
+  name: 'uppercase'
+})
+export class UpperCasePipe implements PipeTransform {
+
+  transform(value: string): string {
+    return value.toUpperCase();
+  }
+
+}
+
+
+Na sequencia, criar um pipe similar para filtrar a lista de produtos (lembrar que a gestão de produtos está em outro módulo)
+
+	ng g p pipes filtrar-produtos --module=modules/produtos/produtos.module.ts
+	ng g p pipes desc-size --module=modules/produtos/produtos.module.ts
+
+------------------------------------------------------------------------
+Definindo o módulo pedidos
+
+	ng g m modules/pedidos --routing
+
+Criando componentes associados ao módulo pedidos:
+
+
+	ng g c components/pedidos/pedidos --module=modules/pedidos/pedidos.module.ts
+	ng g c components/pedidos/pedido-novo --module=modules/pedidos/pedidos.module.ts
+	ng g c components/pedidos/pedidos-lista --module=modules/pedidos/pedidos.module.ts
+
+
+Definindo o service para pedidos. Neste caso, configuraremos este service para ser alocado
+quando o módulo for carregado.
+
+	ng g s services/pedidos
+
+
+Definindo a classe usada para incluir o pedido:
+
+	cpf
+	pedido
+	data
+
+	ng g cl classes/pedidoDTO
+
+Definindo a classe usada como retorno da API de inclusão
+
+	id
+	data
+	numeroPedido
+	cliente
+
+	ng g cl classes/pedidoClienteDTO
+
+
+Definindo a classe usada para obter a lista de pedidos
+
+	idPedido
+	cpf
+	nome
+	numeroPedido
+	data
+
+	ng g cl classes/clientePedidosDTO
+------------------------------------------------------------------
+Implementação do cadastro de itens ao pedido
+
+    No Spring Boot:
+	- criar a classe ProdutoDTO (id, descricao, unidade, preco)
+	- criar a classe PedidoItemDTO (id, data, numeroPedido)
+	- criar a classe ItemDTO (id, preco, quantidade, produtoDTO, pedidoItemDTO)
+
+	Obs.: a classe ItemDTO será usada apenas para retornar o item incluído.
+
+
+    No Angular:
+
+	- criar o módulo para cadastro e listagem de itens
+
+		ng g m modules/item --routing
+
+
+	- adicionar 3 componentes a este novo módulo
+
+		ng g c components/itens/item --module=modules/item/item.module.ts
+		ng g c components/itens/item-novo --module=modules/item/item.module.ts
+		ng g c components/itens/item-lista --module=modules/item/item.module.ts
+
+
+	- adicioanr as classes:
+
+		ng g cl classes/itemNovoDTO
+		ng g cl classes/itemDTO
+		ng g cl classes/itensPedidoDTO
+		ng g cl classes/pedidoItemDTO
+
+	- adicionar o service
+
+		ng g s services/item
+
+
+---------------------------------------------------------------
+
+Adicionar recursos de login para nosso projeto
+
+
+	- Criar o componente login (será criado no módulo principal):
+
+		ng g c components/login
+	
+	- Alterar o arquivo app-routing.module.ts para contemplar o acesso ao login
+
+
+	- Adicionar um novo item de menu posicionado do lado direito, representando usuário logado.
+
+	- Configurar a propriedade 'usuario' como @Input().
+
+	- Criar uma classe chamada Usuario:
+
+		ng g cl classes/usuario
+
+
+	Desejamos proteger a rota '/clientes/novo', de forma que apenas usuários logados possam
+	acessá-la. Se houver um usuário devidamente logado quando a rota protegida for acessada,
+	o usuário é liberado para este acesso. Caso contrário, o usuário é direcionado para a 
+	tela de login.
+	Para isso, criaremos um novo serviço conhecido com 'guard', responsável  por interceptar
+	a rota.
+
+
+	Para gerar o guard:
+
+	- Como classe:
+
+		ng g g guards/auth --functional=false
+
+	- Como função (function)
+
+		ng g g guards/auth		
+
+
+
+
+
+
+
+
+
+
+
+
+
